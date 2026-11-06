@@ -1,0 +1,263 @@
+{
+  "schema_version": 1,
+  "id": "prl-inspired-v1",
+  "version": "1.1.0",
+  "description": "PRL-inspired personal style: large Times/STIX text, blue/red series and square preferred plot boxes",
+  "status": "user-confirmed",
+  "source": {
+    "kind": "derived",
+    "references": [
+      {
+        "id": "user-reference-1",
+        "sha256": "d9199dd381b11c2e43aaef75f9b75a6c09e7486b3430e958c1f6cb4e44055ca8",
+        "kind": "user-provided-screenshot",
+        "note": "Original research reference retained locally; image not included in the distributable package."
+      },
+      {
+        "id": "user-reference-2",
+        "sha256": "97c6b30521787f394b06619ba4d29a50371bb2156b7b4a77f6e5f49f9b44751f",
+        "kind": "user-provided-screenshot",
+        "note": "Original research reference retained locally; image not included in the distributable package."
+      },
+      {
+        "id": "user-reference-3",
+        "sha256": "bb5220348f89604ff57a8c57158d6bb4ea0ba273a3a4b9d8b5083ef7beb3c712",
+        "kind": "user-provided-screenshot",
+        "note": "Original research reference retained locally; image not included in the distributable package."
+      }
+    ],
+    "observations": [
+      {
+        "parameter": "axes-frame-ratio",
+        "evidence": "observed",
+        "value": {
+          "typical_outer_frame_ratio": [
+            1.09,
+            1.1
+          ],
+          "stacked_container_observed": true
+        },
+        "note": "Manual approximate measurements from three supplied screenshots; individual stacked subaxes are not square."
+      },
+      {
+        "parameter": "font.family",
+        "evidence": "assumed",
+        "value": "Times New Roman + STIX",
+        "note": "Serif/italic maths observed; exact source font cannot be established from screenshots. User previously chose Times."
+      },
+      {
+        "parameter": "font.sizes_pt",
+        "evidence": "estimated",
+        "value": {
+          "axis": 13,
+          "ticks": 12,
+          "legend": 11,
+          "panel_id": 14
+        },
+        "note": "Readable starting values at 180 mm total / 56 mm panel width; screenshot alone cannot establish original pt size or physical width."
+      },
+      {
+        "parameter": "categorical-colors",
+        "evidence": "estimated",
+        "value": [
+          {
+            "color": "#003399",
+            "linestyle": "-",
+            "marker": "o"
+          },
+          {
+            "color": "#C41614",
+            "linestyle": "--",
+            "marker": "s"
+          },
+          {
+            "color": "#EC941E",
+            "linestyle": "-.",
+            "marker": "^"
+          },
+          {
+            "color": "#1EAE37",
+            "linestyle": ":",
+            "marker": "D"
+          },
+          {
+            "color": "#0073BD",
+            "linestyle": "-",
+            "marker": "v"
+          },
+          {
+            "color": "#333333",
+            "linestyle": "--",
+            "marker": "x"
+          }
+        ],
+        "note": "Approximate representative saturated interior pixels, not exact source design values. Screenshot 1 blue commonly (0,51,153); screenshot 2 red near (196,22,20), orange near (236,148,30). Antialiasing and capture affect colors. Series bindings remain explicit."
+      },
+      {
+        "parameter": "blue-gradient",
+        "evidence": "estimated",
+        "value": [
+          "#BFCDE9",
+          "#5B80C5",
+          "#003399"
+        ],
+        "note": "For an ordered parameter only; close shades need line/marker redundancy."
+      },
+      {
+        "parameter": "field-palettes",
+        "evidence": "estimated",
+        "value": {
+          "magnitude": {
+            "kind": "sequential",
+            "name": "prl-white-red",
+            "colors": [
+              "#FFFFFF",
+              "#F5D5D0",
+              "#E76C60",
+              "#C41614"
+            ]
+          },
+          "signed": {
+            "kind": "diverging",
+            "name": "prl-blue-white-red",
+            "colors": [
+              "#003399",
+              "#7399D0",
+              "#FFFFFF",
+              "#EDADA6",
+              "#C41614"
+            ]
+          }
+        },
+        "note": "Red-white positive field from reference 3(b), blue-white-red signed fields from reference 1(c,d). Custom maps approximate endpoints; no exact colormap recovered."
+      },
+      {
+        "parameter": "phase-palette",
+        "evidence": "assumed",
+        "value": "twilight_shifted",
+        "note": "No wrapped-phase reference supplied; inherited scientific default, not extracted."
+      },
+      {
+        "parameter": "ticks-spines-legend",
+        "evidence": "observed",
+        "value": "white background, thin four-sided frame, inward sparse major ticks; no ordinary grid; frameless compact legends, open markers, solid/dashed/dotted lines",
+        "note": "Top/right tick visibility varies by source; do not enforce from screenshot."
+      },
+      {
+        "parameter": "panel-titles",
+        "evidence": "confirmed",
+        "value": false,
+        "note": "User prior default retained: (a)... IDs only; conditions/frequencies in caption/data."
+      },
+      {
+        "parameter": "colorbar",
+        "evidence": "confirmed",
+        "value": {
+          "width_mm": 3,
+          "tick_length_pt": 0,
+          "scope": "panel or row"
+        },
+        "note": "Retain user house preference. Short bar in reference 3(b) is an optional design, not copied as default."
+      },
+      {
+        "parameter": "template-appearance",
+        "evidence": "confirmed",
+        "value": "large serif type, blue/red main palette, square preferred frames",
+        "note": "User accepted the rendered examples. Screenshot font/point-size/color estimates remain estimates; confirmation approves the personal adaptation."
+      }
+    ]
+  },
+  "rcparams": {
+    "font.family": "Times New Roman",
+    "mathtext.fontset": "stix",
+    "font.size": 12,
+    "axes.labelsize": 13,
+    "axes.titlesize": 13,
+    "xtick.labelsize": 12,
+    "ytick.labelsize": 12,
+    "legend.fontsize": 11,
+    "axes.linewidth": 0.8,
+    "lines.linewidth": 1.5,
+    "lines.markersize": 5,
+    "xtick.direction": "in",
+    "ytick.direction": "in",
+    "axes.grid": false,
+    "legend.frameon": false,
+    "xtick.major.size": 3.5,
+    "ytick.major.size": 3.5,
+    "xtick.major.width": 0.8,
+    "ytick.major.width": 0.8,
+    "legend.handlelength": 1.5
+  },
+  "series": [
+    {
+      "color": "#003399",
+      "linestyle": "-",
+      "marker": "o"
+    },
+    {
+      "color": "#C41614",
+      "linestyle": "--",
+      "marker": "s"
+    },
+    {
+      "color": "#EC941E",
+      "linestyle": "-.",
+      "marker": "^"
+    },
+    {
+      "color": "#1EAE37",
+      "linestyle": ":",
+      "marker": "D"
+    },
+    {
+      "color": "#0073BD",
+      "linestyle": "-",
+      "marker": "v"
+    },
+    {
+      "color": "#333333",
+      "linestyle": "--",
+      "marker": "x"
+    }
+  ],
+  "field_palettes": {
+    "magnitude": {
+      "kind": "sequential",
+      "name": "prl-white-red",
+      "colors": [
+        "#FFFFFF",
+        "#F5D5D0",
+        "#E76C60",
+        "#C41614"
+      ]
+    },
+    "signed": {
+      "kind": "diverging",
+      "name": "prl-blue-white-red",
+      "colors": [
+        "#003399",
+        "#7399D0",
+        "#FFFFFF",
+        "#EDADA6",
+        "#C41614"
+      ]
+    },
+    "phase": {
+      "kind": "cyclic",
+      "name": "twilight_shifted"
+    }
+  },
+  "geometry": {
+    "single_width_mm": 90,
+    "combination_width_mm": 180,
+    "panel_fontsize": 14,
+    "panel_offset_pt": [
+      -12,
+      5
+    ],
+    "colorbar_width_mm": 3.0,
+    "colorbar_gap_mm": 2.4,
+    "colorbar_tick_length_pt": 0
+  }
+}

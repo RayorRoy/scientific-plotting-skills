@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "id": "house-times-v3",
+  "version": "1.1.0",
+  "description": "Basic scientific plotting: large Times/STIX text, accessible categorical palette and flexible layouts",
+  "status": "user-confirmed",
+  "source": {
+    "kind": "user-defined",
+    "references": [],
+    "observations": [
+      {
+        "parameter": "font.family",
+        "evidence": "confirmed",
+        "value": "Times New Roman",
+        "note": "Explicit user choice"
+      },
+      {
+        "parameter": "colorbar",
+        "evidence": "confirmed",
+        "value": {
+          "width_mm": 3.0,
+          "tick_marks": false
+        },
+        "note": "2026-11-06 user requested wider bars and optional tick marks; labels retained; original colorbar preference retained"
+      },
+      {
+        "parameter": "typography",
+        "evidence": "confirmed",
+        "value": {
+          "font.size": 12,
+          "axes.labelsize": 13,
+          "tick.labelsize": 12,
+          "legend.fontsize": 11,
+          "panel_fontsize": 14
+        },
+        "note": "2026-11-06 user requested the basic style also use large type with a small hierarchy, matching the PRL template; palettes and line styles retained. Earlier profiles are retained in the local development record."
+      }
+    ]
+  },
+  "rcparams": {
+    "font.family": "Times New Roman",
+    "mathtext.fontset": "stix",
+    "font.size": 12,
+    "axes.labelsize": 13,
+    "axes.titlesize": 13,
+    "xtick.labelsize": 12,
+    "ytick.labelsize": 12,
+    "legend.fontsize": 11,
+    "axes.linewidth": 0.65,
+    "lines.linewidth": 1.2,
+    "lines.markersize": 3.5,
+    "xtick.direction": "in",
+    "ytick.direction": "in",
+    "axes.grid": false,
+    "legend.frameon": false
+  },
+  "series": [
+    {
+      "color": "#0072B2",
+      "linestyle": "-",
+      "marker": "o"
+    },
+    {
+      "color": "#D55E00",
+      "linestyle": "--",
+      "marker": "s"
+    },
+    {
+      "color": "#009E73",
+      "linestyle": "-.",
+      "marker": "^"
+    },
+    {
+      "color": "#7A5195",
+      "linestyle": ":",
+      "marker": "D"
+    },
+    {
+      "color": "#A67600",
+      "linestyle": "--",
+      "marker": "v"
+    },
+    {
+      "color": "#333333",
+      "linestyle": "-.",
+      "marker": "x"
+    }
+  ],
+  "field_palettes": {
+    "magnitude": {
+      "kind": "sequential",
+      "name": "Blues"
+    },
+    "signed": {
+      "kind": "diverging",
+      "name": "RdBu_r"
+    },
+    "phase": {
+      "kind": "cyclic",
+      "name": "twilight_shifted"
+    }
+  },
+  "geometry": {
+    "single_width_mm": 90,
+    "combination_width_mm": 180,
+    "panel_fontsize": 14,
+    "panel_offset_pt": [
+      -12,
+      5
+    ],
+    "colorbar_width_mm": 3.0,
+    "colorbar_gap_mm": 2.4,
+    "colorbar_tick_length_pt": 0
+  }
+}

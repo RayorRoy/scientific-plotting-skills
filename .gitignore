@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.cache/
+.venv/
+venv/
+outputs/
+example_output/
+dist/
+*.egg-info/
+.DS_Store
+Thumbs.db
+.env
+.env.*
+!.env.example

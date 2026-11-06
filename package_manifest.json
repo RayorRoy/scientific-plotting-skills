@@ -1,0 +1,48 @@
+{
+  "name": "personal-scientific-plotting",
+  "version": "1.0.0",
+  "profiles": [
+    "house-times-v3",
+    "prl-inspired-v1"
+  ],
+  "files": {
+    ".gitignore": "1b541bf76d769cb6dc9ce2570e025b82524e8bb5b3453a830c32e32d466d4868",
+    "assets/builtin_colormaps.json": "a192f53e2f1b829d16bd65c7148f88d7592fb67c7faaf07a4d401074282ecb6e",
+    "assets/previews/basic.png": "176917d4d12726bb2ab24a5eab7429103458453c3858c844bc8c793100431994",
+    "assets/previews/prl.png": "bf858bf4c1a0a52f0f2b5189a8b8726ac7083b639f6ed9630f2379980ca033b3",
+    "assets/profiles/house-times-v3.json": "7da56abf25173fa0e2cb25daecd100ef9000f1a1c2f0a6b6bbc8891519d4f747",
+    "assets/profiles/prl-inspired-v1.json": "6c804415acd4fe16998323b1ddc0094faf0f84d99edf26ed4388f311e092b998",
+    "assets/times.mplstyle": "5c157abcc4aa073de8b231118b65eb70d89da5ffb7a0e790d55056d670623550",
+    "README.md": "f7f73e78868d4a3d451410c745d2e260373361db0bfa8b45289d930cb80543cd",
+    "references/layouts.md": "aa8e656aef7d884387d12ae330213bb46bac2304c7ad96841e54dd9ed803e084",
+    "references/portability.md": "6aca73ed7207b03c0f39cf1e904b4d75231d3b16212b59f10d4f21a196b0daf0",
+    "references/prl-inspired-v1.md": "a4d08191faf3e0c00233893a658a412cf613b85948d59957a64e207146992689",
+    "references/sources.md": "42b51987c4f395811b9a12223057f43ca157f570eebba2c07061f0c5847aa6c5",
+    "references/standards.md": "36f20f5ea21cc71fab45a193fd39831d83632db466608379e74d6ec066c0d8c3",
+    "references/template-library.md": "405e609cca5e7c2bcc557a142c51a3f9ce089cce442185c33f0931515d415926",
+    "requirements.txt": "5d4290783f9f2f7454317dfa1dca41b0cc98841e61e21a2a9b8bfa775a49bef4",
+    "scripts/example.py": "8e0797e791d1499978b0b28a5f05a278feb7c8dfd9a70b25d8b462f329d2479e",
+    "scripts/houseplot/__init__.py": "02312fa477fd94d1eadf243436356e3c741cd435bdb3142febee9a73684805a6",
+    "scripts/houseplot/colorbar.py": "a52f8a319478081b13b8da596b413c7cb105a533e8e6e44be761d0802493c8e1",
+    "scripts/houseplot/export.py": "f8961ae826ddb7e71b4d53cd80cc4d2f4afda719fd2c841c6dc4503a6cec25c1",
+    "scripts/houseplot/layouts.py": "2c9b2e71620f7e459ac9da90fe25b7bfb28b52803d26e6b04a9d135c0f083f0f",
+    "scripts/houseplot/profiles.py": "6e83b6a145e6e1fd2709b28f88ece46f5f53d610f9032eac0f406d94f46d27e9",
+    "scripts/houseplot/science.py": "4199ef59d92496f6275ae544b9939d0a229991fe086181e9d35c6de6f488b3aa",
+    "scripts/houseplot/spatial.py": "85af58e7fe801c9336ca89f7396b2d0a42b18228c5f5e59f1d5e83b6f65da853",
+    "scripts/houseplot/style.py": "1982178a5f4bd6859f8fb2f92e4d75fa7856d239eca2526c8697b3f3fd4fb636",
+    "scripts/manage_profiles.py": "dd89f5b2cac2c5461624b2c67abe5b230f2d6b9ae855eaeb0b192069049cb865",
+    "scripts/prl_examples.py": "85aaf2debe309f7ca214550e03a1604aae7b1606ade08b3447722a7e85aab8a3",
+    "SKILL.md": "cab11a1a563f11e7ef562b079a91f72f3fc09d9a1082428e4b2f60a2c7e77837",
+    "tests/test_core.py": "7359b32408e8ec313750b5e922d5058e0d305f04a729803d47f28b83a9a6abbf",
+    "tests/test_geometry.py": "a48c29973ce4a75e59b52283f31877cf85e9b772c59c0c48e90faaa77d6356b6",
+    "tests/test_profiles.py": "4baaef4d2ea68081aaeb2be780e8ef878c19bc3561ea9043c983f32f634c5558",
+    "tests/test_spatial.py": "5dca1e17abbcf2c78d7e87a40011177ebf8ccacda78f66096f93409a0337f2ee"
+  },
+  "excluded": [
+    "development caches",
+    "historical profiles and revisions",
+    "paper data and PDFs",
+    "original reference screenshots",
+    "system fonts"
+  ]
+}
