@@ -1,7 +1,9 @@
 """Rendered geometry contracts from the user's four visual corrections."""
 from pathlib import Path
+import json
 import os
 import sys
+import tempfile
 import unittest
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -10,14 +12,41 @@ os.environ['MPLCONFIGDIR']=str(ROOT/'.cache/matplotlib')
 sys.path.insert(0,str(ROOT/'scripts'))
 import matplotlib
 matplotlib.use('Agg')
+from matplotlib import font_manager
 import matplotlib.pyplot as plt
 import numpy as np
 import houseplot
+from houseplot.profiles import load_profile
+
+
+def _available_profile(tmpdir):
+    try:
+        font_manager.findfont('Times New Roman', fallback_to_default=False)
+        return None
+    except Exception:
+        pass
+    for candidate in ('Liberation Serif', 'DejaVu Serif', 'DejaVu Sans'):
+        try:
+            font_manager.findfont(candidate, fallback_to_default=False)
+            p = load_profile('house-times-v3')
+            p['id'] = 'test-geom-font'
+            p['rcparams']['font.family'] = candidate
+            path = Path(tmpdir) / '_geom_profile.json'
+            path.write_text(json.dumps(p), encoding='utf-8')
+            return path
+        except Exception:
+            continue
+    raise RuntimeError('No suitable test font installed')
 
 
 class GeometryTests(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory(dir=ROOT / '.cache')
+        self._profile = _available_profile(self._tmp.name)
+
     def tearDown(self):
         plt.close('all')
+        self._tmp.cleanup()
 
     def field(self,ax):
         x=np.linspace(-1,1,11)
@@ -27,7 +56,7 @@ class GeometryTests(unittest.TestCase):
         return im
 
     def test_main_field_spans_the_full_two_panel_height(self):
-        with houseplot.style_context():
+        with houseplot.style_context(profile=self._profile):
             fig,axes=houseplot.make_layout('main_side')
             im=self.field(axes['A'])
             houseplot.add_colorbar(fig,im,axes['A'],'$q/q_0$')
@@ -40,7 +69,7 @@ class GeometryTests(unittest.TestCase):
             self.assertAlmostEqual(a.width,a.height,delta=.2)
 
     def test_mixed_field_and_polar_plot_boxes_align(self):
-        with houseplot.style_context():
+        with houseplot.style_context(profile=self._profile):
             fig,axes=houseplot.make_layout('mixed')
             im=self.field(axes['B'])
             houseplot.add_colorbar(fig,im,axes['B'],'$q/q_0$')
@@ -52,7 +81,7 @@ class GeometryTests(unittest.TestCase):
             self.assertLess(abs(b.height-d.height)/fig.dpi*25.4,.2)
 
     def test_panel_label_is_outside_above_and_to_left(self):
-        with houseplot.style_context():
+        with houseplot.style_context(profile=self._profile):
             fig,ax=plt.subplots(figsize=(4,3),layout='constrained')
             houseplot.panel_label(ax,0)
             fig.canvas.draw()
@@ -62,19 +91,19 @@ class GeometryTests(unittest.TestCase):
             self.assertGreater(text.y0,box.y1)
 
     def test_panel_name_is_hidden_by_default_but_letter_remains(self):
-        with houseplot.style_context():
+        with houseplot.style_context(profile=self._profile):
             fig,ax=plt.subplots()
             houseplot.panel_label(ax,0,'W5: 200.034 Hz')
             self.assertEqual([t.get_text() for t in ax.texts],['(a)'])
 
     def test_panel_name_can_be_explicitly_enabled(self):
-        with houseplot.style_context():
+        with houseplot.style_context(profile=self._profile):
             fig,ax=plt.subplots()
             houseplot.panel_label(ax,0,'W5: 200.034 Hz',show_subtitle=True)
             self.assertIn('W5: 200.034 Hz',[t.get_text() for t in ax.texts])
 
     def test_colorbar_width_height_and_five_linear_ticks(self):
-        with houseplot.style_context():
+        with houseplot.style_context(profile=self._profile):
             fig,axes=houseplot.make_layout('single')
             im=self.field(axes['A'])
             cb=houseplot.add_colorbar(fig,im,axes['A'],'$q/q_0$')
@@ -89,7 +118,7 @@ class GeometryTests(unittest.TestCase):
             self.assertTrue(any(t.get_text() for t in cb.ax.get_yticklabels()))
 
     def test_shared_colorbar_tracks_actual_field_height(self):
-        with houseplot.style_context():
+        with houseplot.style_context(profile=self._profile):
             fig,axes=houseplot.make_layout('row3')
             for ax in axes.values():im=self.field(ax)
             cb=houseplot.add_colorbar(fig,im,list(axes.values()),'$q/q_0$')
@@ -102,7 +131,7 @@ class GeometryTests(unittest.TestCase):
 
     def test_phase_and_log_colorbar_ticks_are_bounded_and_explicit(self):
         from matplotlib.colors import LogNorm
-        with houseplot.style_context():
+        with houseplot.style_context(profile=self._profile):
             fig,axes=houseplot.make_layout('row3')
             norm,cmap=houseplot.field_scale([np.array([-np.pi,np.pi])],'phase')
             im=axes['A'].imshow([[0,1],[2,3]],norm=norm,cmap=cmap)
@@ -115,7 +144,7 @@ class GeometryTests(unittest.TestCase):
             self.assertTrue(all(.025<=v<=140 for v in log.get_ticks()))
 
     def test_mixed_colorbar_label_stays_on_page(self):
-        with houseplot.style_context():
+        with houseplot.style_context(profile=self._profile):
             fig,axes=houseplot.make_layout('mixed')
             im=self.field(axes['B']);im.set_clim(-.698,.698)
             cb=houseplot.add_colorbar(fig,im,axes['B'],'$q/q_0$')
@@ -125,7 +154,7 @@ class GeometryTests(unittest.TestCase):
 
     def test_log_colorbar_decade_intervals_are_uniform(self):
         from matplotlib.colors import LogNorm
-        with houseplot.style_context():
+        with houseplot.style_context(profile=self._profile):
             fig,axes=houseplot.make_layout('single')
             im=axes['A'].imshow([[.001,1],[10,100]],norm=LogNorm(.001,100))
             cb=houseplot.add_colorbar(fig,im,axes['A'],'Pressure (kPa)')
@@ -136,7 +165,7 @@ class GeometryTests(unittest.TestCase):
     def test_narrow_log_labels_keep_distinct_values(self):
         from matplotlib.colors import LogNorm
         for lo,hi in [(1,1.001),(99.99,100.01)]:
-            with self.subTest(lo=lo),houseplot.style_context():
+            with self.subTest(lo=lo),houseplot.style_context(profile=self._profile):
                 fig,axes=houseplot.make_layout('single')
                 im=axes['A'].imshow([[lo,hi]],norm=LogNorm(lo,hi))
                 cb=houseplot.add_colorbar(fig,im,axes['A'],'Value')
@@ -145,7 +174,7 @@ class GeometryTests(unittest.TestCase):
                 self.assertEqual(len(set(labels)),len(cb.get_ticks()))
 
     def test_mixed_150mm_preserves_colorbar_label_space(self):
-        with houseplot.style_context():
+        with houseplot.style_context(profile=self._profile):
             fig,axes=houseplot.make_layout('mixed',width_mm=150)
             im=self.field(axes['B']);im.set_clim(-.698,.698)
             cb=houseplot.add_colorbar(fig,im,axes['B'],'$q/q_0$')
@@ -160,14 +189,14 @@ class GeometryTests(unittest.TestCase):
                 houseplot.make_layout(layout,width_mm=120)
 
     def test_colorbar_does_not_silently_span_disjoint_rows(self):
-        with houseplot.style_context():
+        with houseplot.style_context(profile=self._profile):
             fig,axes=houseplot.make_layout('grid',rows=2,cols=2)
             for ax in axes.values():im=self.field(ax)
             with self.assertRaises(ValueError):
                 houseplot.add_colorbar(fig,im,list(axes.values()),'Level')
 
     def test_row_colorbars_preserve_positions_and_joint_mapping(self):
-        with houseplot.style_context():
+        with houseplot.style_context(profile=self._profile):
             fig,axes=houseplot.make_layout('grid',rows=2,cols=2)
             fig.set_layout_engine('none');fig.set_size_inches(180/25.4,166/25.4)
             boxes=[(18,94,58,58),(96,94,58,58),(18,17,58,58),(96,17,58,58)]

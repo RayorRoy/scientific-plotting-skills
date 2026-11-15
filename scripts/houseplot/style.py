@@ -43,6 +43,8 @@ def panel_label(ax, index, subtitle=None, *, show_subtitle=False):
                        xytext=geom['panel_offset_pt'],textcoords='offset points',
                        ha='left',va='bottom',fontsize=geom['panel_fontsize'],fontweight='bold',
                        annotation_clip=False)
+    if artist.get_gid() is None:
+        artist.set_gid(f'panel_label_{label}')
     if subtitle and show_subtitle:
         ax.annotate(subtitle,xy=(1,1),xycoords='axes fraction',
                     xytext=(0,5),textcoords='offset points',

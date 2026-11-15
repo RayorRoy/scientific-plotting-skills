@@ -13,17 +13,40 @@ os.environ['MPLCONFIGDIR']=str(ROOT/'.cache/matplotlib')
 sys.path.insert(0,str(ROOT/'scripts'))
 import matplotlib
 matplotlib.use('Agg')
+from matplotlib import font_manager
 import matplotlib.pyplot as plt
 import numpy as np
 import houseplot
 from houseplot.profiles import load_profile, validate_profile, profile_fingerprint, compose_profile
 
 
+def _available_font():
+    for candidate in ('Times New Roman', 'Liberation Serif', 'DejaVu Serif', 'DejaVu Sans'):
+        try:
+            font_manager.findfont(candidate, fallback_to_default=False)
+            return candidate
+        except Exception:
+            continue
+    raise RuntimeError('No suitable test font installed')
+
+
+def _available_profile(tmpdir):
+    font = _available_font()
+    if font == 'Times New Roman':
+        return None
+    p = load_profile('house-times-v3')
+    p['id'] = 'test-prof-font'
+    p['rcparams']['font.family'] = font
+    path = Path(tmpdir) / '_prof.json'
+    path.write_text(json.dumps(p), encoding='utf-8')
+    return path
+
+
 class ProfileTests(unittest.TestCase):
     def tearDown(self):plt.close('all')
 
     def test_large_house_type_reaches_axes_legends_and_colorbars(self):
-        with houseplot.style_context():
+        with tempfile.TemporaryDirectory(dir=ROOT/'.cache') as d, houseplot.style_context(profile=_available_profile(d)):
             fig,axes=houseplot.make_layout('single');ax=axes['A']
             ax.set(xlabel='Position',ylabel='Response')
             ax.plot([0,1],[0,1],label='Case');legend=ax.legend()
@@ -52,6 +75,7 @@ class ProfileTests(unittest.TestCase):
 
     def test_template_changes_palette_and_size_but_not_field_values_or_norm(self):
         p=load_profile();p['id']='test-local';p['version']='1.0.0'
+        p['rcparams']['font.family']=_available_font()
         p['series'][0]['color']='#602080';p['rcparams']['axes.labelsize']=11
         p['field_palettes']['signed']['name']='PuOr'
         p['geometry']['single_width_mm']=100
@@ -98,8 +122,10 @@ class ProfileTests(unittest.TestCase):
                 report=houseplot.export_figure(fig,Path(d)/'font',{'data_kind':'synthetic','sources':[],'transformations':[]},dpi=100)
                 self.assertEqual(report['profile']['id'],'test-dejavu')
                 self.assertIn('dejavusans',report['font_file'].lower())
-                self.assertTrue(report['checks']['configured_font_in_pdf'])
-                self.assertFalse(report['checks']['times_font_in_pdf'])
+                if report['checks']['pdf_inspected']:
+                    self.assertTrue(report['checks']['configured_font_in_pdf'])
+                    self.assertFalse(report['checks']['times_font_in_pdf'])
+                self.assertIn('DejaVu Sans', report['svg_checks']['fonts_referenced'])
 
     def test_composition_preserves_base_and_marks_new_style_as_draft(self):
         base=load_profile();old=profile_fingerprint(base)
@@ -130,7 +156,9 @@ class ProfileTests(unittest.TestCase):
                 fig,ax=plt.subplots(figsize=(3,2));ax.plot([0,1],[0,1])
             report=houseplot.export_figure(fig,Path(d)/'plain',{'data_kind':'synthetic','sources':[],'transformations':[]},dpi=100)
             self.assertEqual(report['profile']['id'],'test-plain')
-            self.assertTrue(report['checks']['configured_font_in_pdf'])
+            if report['checks']['pdf_inspected']:
+                self.assertTrue(report['checks']['configured_font_in_pdf'])
+            self.assertTrue(report['checks']['svg_true_vector'])
 
     def test_composition_keeps_reference_evidence(self):
         base=load_profile();base['source']['references']=[{'path':'assets/evidence/crop.png','sha256':'abc'}]
@@ -148,6 +176,7 @@ class ProfileTests(unittest.TestCase):
             with self.assertRaises(ValueError):validate_profile(p)
         finally:matplotlib.colormaps.unregister(name)
         p['field_palettes']['magnitude']['colors']=['#FFFFFF','#000080']
+        p['rcparams']['font.family']=_available_font()
         with tempfile.TemporaryDirectory(dir=ROOT/'.cache') as d:
             path=Path(d)/'nodes.json';path.write_text(json.dumps(p),encoding='utf-8')
             with houseplot.style_context(profile=path):

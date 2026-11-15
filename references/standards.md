@@ -12,7 +12,7 @@ The confirmed personal defaults are adjustable when the data and intended size r
 | Curve / axes frame | 1.2 / 0.65 pt |
 | Marker diameter | 3.5 pt; sparse on dense lines |
 | Axes | Four-sided frame; inward ticks; no default Cartesian grid |
-| Exports | PDF + SVG with text + 600 DPI PNG, opaque white |
+| Exports | Mandatory 600 DPI opaque-white PNG + Illustrator-editable SVG 1.1 (`svg.fonttype='none'`) + reproducible `.py` source (plus PDF & JSON audit) |
 | Panel ID | Outside upper-left; 12 pt left / 5 pt above plot corner |
 | Descriptive panel title | Off by default; state/condition/frequency belongs in caption and provenance |
 | Vertical colorbar | 3 mm width; 2.4 mm gap; actual single-panel/row height |
@@ -47,7 +47,27 @@ Use a zero baseline for bars in ordinary linear comparisons; a log baseline for 
 
 Keep a per-figure JSON (or equivalent) containing source paths/hashes, columns, units, transforms, exclusions, scale limits, any uncertainty/seed, caption, code/version and output hashes. Prefer meaningful CSV or native analysis tables; XLSX and PDF reports are optional deliverables, not mandatory for every plot.
 
-The exporter verifies PDF size and font embedding and PNG dimensions/DPI, and screens text bounds. Its typography and raster checks are not a publisher acceptance certificate. It does not measure each embedded image's effective DPI, check contrast at every pixel, or prove absence of overlapping artists. Inspect the actual exported PDF at final size. Verify live journal rules only for a specified destination/phase.
+The exporter (`save_publication_figure` and `export_figure`) automatically verifies PNG and SVG deliverables (and PDF when PyMuPDF is installed), and screens text bounds. Its checks are not a publisher acceptance certificate or an Adobe Illustrator live-UI test when Illustrator is absent.
+
+### Mandatory export & inspection rules
+
+1. **Both PNG and SVG by default**: Every figure export must produce both `*.png` and `*.svg` together with `*.py` (reproducible source) via `save_publication_figure(fig, output_name, ...)`.
+2. **PNG (600 DPI)**:
+   - Default `dpi=600` (`require_600_dpi=True` in `save_publication_figure`).
+   - Pixel dimensions match the final print size (`width_mm / 25.4 * 600` × `height_mm / 25.4 * 600`).
+   - Opaque white background (`facecolor='white'`, `transparent=False`).
+   - Direct Matplotlib rasterization at 600 DPI; never upscale a low-resolution image.
+   - Post-export check (`inspect_png`) verifies existence, decodable PNG format, `dpi` metadata == 600, exact pixel dimensions, and opaque white background.
+3. **SVG (Adobe Illustrator editable)**:
+   - Native SVG 1.1 vector objects (`version="1.1"`, `svg.image_inline=True`); whole-figure rasterization is forbidden.
+   - Curves, axes, ticks, markers, legends, annotations, and text stay independent and structured under clean `<g id="...">` groups (`panel_A`, `colorbar_1`, `legend_1`, etc.).
+   - Default `svg.fonttype = 'none'` preserves editable `<text>` / `<tspan>` rather than converting all text to paths.
+   - Avoid `<filter>`, `mix-blend-mode`, `isolation`, `<foreignObject>`, and external CSS/file dependencies.
+   - Necessary photos or high-density rasterized fields (`pcolormesh(..., rasterized=True)`) may be embedded inline at `dpi=600`, and `inspect_svg` reports each embedded `<image>`'s effective DPI at printed size.
+   - Font compatibility is recorded (`fonts_referenced`, `font_compatibility_warnings`, including `STIXGeneral` for mathtext). When font-missing risk exists on a target Illustrator machine, pass `svg_text_to_path=True` to export an additional `<stem>.outlined.svg` (`svg.fonttype='path'`) rather than outlining text by default.
+   - `inspect_svg` verifies valid XML, SVG 1.1, true vector geometry, editable text, group structure, zero external dependencies, and Illustrator-compatible elements, while explicitly recording `illustrator_tested: false` when Adobe Illustrator is not installed.
+
+Inspect the actual exported PNG/PDF preview at final size. Verify live journal rules only for a specified destination/phase.
 
 ## Application prompts
 

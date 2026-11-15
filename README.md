@@ -1,8 +1,8 @@
 # Personal Scientific Plotting
 
-一套基于 **Python / Matplotlib** 的个人科研绘图 skill，包含基础风格与 PRL 参考风格两套模板。统一字体、字号、子图编号、色条、布局和导出方式，同时保留数据来源与处理记录。
+一套基于 **Python / Matplotlib** 的个人科研绘图 skill，兼容 **Antigravity**、**Claude Code** 与 **Codex**，包含基础风格与 PRL 参考风格两套模板。统一字体、字号、子图编号、色条、布局和导出方式，强制默认同时输出 **600 DPI 白色背景 PNG**、**Adobe Illustrator 可二次编辑 SVG** 与 **完整可复现 `.py` 源码**，并附带导出质量自动检查与数据溯源记录。
 
-这是可独立复制的 skill 目录，也可作为 GitHub 仓库根目录。无需原开发项目、论文数据或其他 scientific skills。版本：**1.0.0**。
+这是可独立复制的 skill 目录，也可作为 GitHub 仓库根目录。无需原开发项目、论文数据或其他 scientific skills。版本：**1.1.0**。
 
 ## 两套模板
 
@@ -33,16 +33,17 @@ PRL 风格样图（解析公式与明确给定的演示数组）：
 - 默认保留左上方 `(a)、(b)…` 编号，不自动添加 `W5: 200.034 Hz` 等工况标题。
 - 统一色条宽度3 mm、间距2.4 mm，保留数字、隐藏刻度短线；多行云图采用每图或每行一根。
 - 按量的含义选择配色与归一化；保留延拓支路顺序、缺失区域、带符号量和原始网格。
-- 导出 PDF、保留文字的 SVG、600 DPI PNG、PDF实际渲染预览与JSON记录。
+- **强制双格式科研导出与质量检查**：统一调用 `save_publication_figure(fig, output_name, ...)`，默认一次生成 `*.png`（600 DPI、白色不透明背景）、`*.svg`（SVG 1.1、保留可编辑文字与结构分组，适合 Adobe Illustrator 二次编辑）、`*.py`（完整可复现脚本）、`*.pdf`、`*.preview.png`（需 PyMuPDF）与 `*.json` 质检审计报告。
+- **自动校验**：自动核查 PNG DPI 元数据（600 DPI）、像素尺寸、白底不透明，以及 SVG 1.1 合法性、真实矢量（禁止整图栅格化）、可编辑 `<text>`、内嵌位图有效 DPI、外部资源零依赖与 Illustrator 兼容性；对字体缺失风险给出警告并提供可选 `.outlined.svg` 转曲兜底。
 - 从后续截图/PDF提取新的配色、线型或完整外观，形成版本化模板库。
 
 颜色、线型、字体和布局属于外观；色限、参考值、归一化和数据筛选属于科学处理，不能因更换模板而悄悄变化。空间场需保持物理坐标等比例；曲线的正方形图框不意味着x/y单位必须等比例。
 
 ## 环境与安装
 
-已验证环境为 **Python 3.12.10 / Windows**。`requirements.txt`记录已测试的直接依赖版本，不是跨平台完整锁文件；其他系统需检查依赖与字体后运行示例验证。
+已验证环境包括 **Python 3.12.10 / Windows** 与 **Python 3.14 / Ubuntu Linux**。`requirements.txt` 记录已测试的直接依赖版本，不是跨平台完整锁文件；其他系统需检查依赖与字体后运行示例验证。
 
-需要：NumPy、Matplotlib、Pillow、PyMuPDF。仅使用这些运行功能，不要求 pandas、LaTeX 或 scientific-visualization。
+核心依赖：NumPy、Matplotlib、Pillow；PyMuPDF 为可选依赖（安装后额外提供 PDF 内嵌字体检查与 `.preview.png` 渲染）。仅使用这些运行功能，不要求 pandas、LaTeX 或 scientific-visualization。
 
 从本目录运行，建议使用独立环境：
 
@@ -53,39 +54,36 @@ python -m venv .venv
 
 以下命令中的 `python` 应指向安装依赖的同一个解释器；也可直接写 `.venv/Scripts/python.exe`。已有合适环境时可直接使用。
 
-**字体**：目标电脑需要已安装 Times New Roman；STIX 数学字体由 Matplotlib 提供。系统字体不随本仓库分发。缺少指定字体时会明确报错，不会静默换成别的字体。若要改字体，用独立 JSON 模板记录选择。
+**字体**：默认模板 `house-times-v3` 与 `prl-inspired-v1` 需要目标系统已安装 `Times New Roman`；STIX 数学字体由 Matplotlib 提供。缺少指定字体时会明确报错，不会静默换成别的字体。在未安装 Times New Roman 的 Linux 上，可先安装微软核心字体，或通过 `manage_profiles.py` 新建显式使用 `Liberation Serif` 等本地字体的独立 JSON 模板。若 SVG 需在无对应字体或无 STIX 字体的 Illustrator 机器打开，可传 `svg_text_to_path=True` 额外生成一份文字转轮廓的 `*.outlined.svg`。
 
-### 安装为 Codex skill
+### 安装为 Antigravity / Claude Code / Codex skill
 
-将本目录放到 `$CODEX_HOME/skills/personal-scientific-plotting`；未设置 `CODEX_HOME` 时使用 `~/.codex/skills/personal-scientific-plotting`。
+本仓库同时兼容 **Antigravity**、**Claude Code** 与 **Codex**，对应全局发现目录分别为：
+- **Antigravity**：`~/.gemini/config/skills/personal-scientific-plotting`（或项目内 `.agents/skills/personal-scientific-plotting`）
+- **Claude Code**：`~/.claude/skills/personal-scientific-plotting`（或项目内 `.claude/skills/personal-scientific-plotting`）
+- **Codex**：`$CODEX_HOME/skills/personal-scientific-plotting`（默认 `~/.codex/skills/personal-scientific-plotting`）
 
-以下 PowerShell 命令从本仓库根目录执行，只复制运行需要的文件，已有同名目录时停止，便于先备份或决定如何更新：
+推荐使用内置跨平台安装脚本（支持 `--mode copy` 或 `--mode symlink`）：
 
-```powershell
-$skillRoot = if ($env:CODEX_HOME) {
-    Join-Path $env:CODEX_HOME 'skills'
-} else {
-    Join-Path $HOME '.codex/skills'
-}
-$installDir = Join-Path $skillRoot 'personal-scientific-plotting'
-if (Test-Path -LiteralPath $installDir) { throw '目标已存在，请先备份或处理更新。' }
-New-Item -ItemType Directory -Force -Path $installDir | Out-Null
-foreach ($item in @('SKILL.md', 'README.md', 'requirements.txt', 'scripts', 'assets', 'references')) {
-    Copy-Item -LiteralPath (Join-Path $PWD $item) -Destination $installDir -Recurse
-}
+```bash
+# 同时安装到 Antigravity 与 Claude Code
+python -B scripts/install_skill.py --target antigravity claude --mode copy
+
+# 或全部三个平台一起安装/链接
+python -B scripts/install_skill.py --target all --mode symlink --overwrite
 ```
 
 不安装也能从当前目录运行下述示例。
 
 ## 怎么使用
 
-### 1. 直接告诉 Codex
+### 1. 直接告诉 Antigravity / Claude Code / Codex
 
 明确指定 skill、模板、数据和科学含义，例如：
 
-> 使用 `$personal-scientific-plotting`，按基础模板绘制这个CSV的频响曲线。横轴frequency_hz，纵轴pressure_pa，单位Hz和Pa；保留各支路原始顺序，采用对数纵轴。
+> 使用 `personal-scientific-plotting`，按基础模板绘制这个CSV的频响曲线。横轴frequency_hz，纵轴pressure_pa，单位Hz和Pa；保留各支路原始顺序，采用对数纵轴；导出 600 DPI PNG 与 Illustrator 可编辑 SVG。
 
-> 使用 `$personal-scientific-plotting` 的PRL模板绘制2×2组合图，每行一个色条；四张图比较同一物理量，使用共同色限。保留编号，不添加工况标题。
+> 使用 `personal-scientific-plotting` 的PRL模板绘制2×2组合图，每行一个色条；四张图比较同一物理量，使用共同色限。保留编号，不添加工况标题。
 
 提供实际数据时，说明文件、列名、单位、工况/支路、幅值含义，以及是否归一化。风格模板不会替你推断RMS与峰值，也不会凭空补数据或误差条。
 
@@ -109,20 +107,29 @@ python -B scripts/prl_examples.py --output-dir outputs/prl --overwrite
 
 ### 3. 在自己的 Python 脚本中调用
 
-先将已安装skill的 `scripts` 加入导入路径，也可把 `skill_dir` 指向本仓库目录：
+自动解析 Antigravity / Claude Code / Codex 或本地仓库下的 `scripts/` 路径并调用统一导出接口 `save_publication_figure`：
 
 ```python
 from pathlib import Path
 import os
 import sys
 
-skill_dir = Path(os.environ.get('CODEX_HOME', str(Path.home() / '.codex'))) / 'skills' / 'personal-scientific-plotting'
-sys.path.insert(0, str(skill_dir / 'scripts'))
+candidates = [
+    Path('.agents/skills/personal-scientific-plotting/scripts'),
+    Path('.claude/skills/personal-scientific-plotting/scripts'),
+    Path.home() / '.gemini/config/skills/personal-scientific-plotting/scripts',
+    Path.home() / '.claude/skills/personal-scientific-plotting/scripts',
+    Path(os.environ.get('CODEX_HOME', str(Path.home() / '.codex'))) / 'skills/personal-scientific-plotting/scripts',
+]
+skill_scripts = next((p for p in candidates if (p / 'houseplot').is_dir()), None)
+if skill_scripts is None:
+    raise FileNotFoundError('personal-scientific-plotting scripts directory not found')
+sys.path.insert(0, str(skill_scripts))
 os.environ.setdefault('MPLCONFIGDIR', str(Path('outputs/.cache').resolve()))
 
 import numpy as np
 import matplotlib.pyplot as plt
-from houseplot import style_context, make_layout, plot_curve, series_style, export_figure
+from houseplot import style_context, make_layout, plot_curve, series_style, save_publication_figure
 
 with style_context(profile='house-times-v3'):
     fig, axes = make_layout('single')
@@ -132,12 +139,17 @@ with style_context(profile='house-times-v3'):
                **series_style(0), markevery=10, label='Analytic demo')
     ax.set(xlabel='$t/t_0$', ylabel='$R/R_0$')
     ax.legend()
-    report = export_figure(fig, 'outputs/my_figure', {
-        'data_kind': 'synthetic',
-        'sources': [],
-        'transformations': ['x=linspace(0,1,101); y=sin(pi*x)^2'],
-        'caption': 'Analytic demonstration; not experimental data.',
-    })
+    report = save_publication_figure(
+        fig,
+        'outputs/my_figure',
+        {
+            'data_kind': 'synthetic',
+            'sources': [],
+            'transformations': ['x=linspace(0,1,101); y=sin(pi*x)^2'],
+            'caption': 'Analytic demonstration; not experimental data.',
+        },
+        source_script=Path(__file__),
+    )
     plt.close(fig)
 
 print(report['checks'])
@@ -145,7 +157,13 @@ print(report['checks'])
 
 切换外观：将profile改为 `prl-inspired-v1`。若还要采用PRL固定正方形组合布局，用 `from prl_examples import square_layout`，再调用 `fig, axes = square_layout()`；单图使用 `square_layout(single=True)`。
 
-导出记录包括物理尺寸、PNG像素/DPI、实际字体、模板完整快照及指纹、代码/输出哈希和面板/色条几何。PDF嵌入字体；SVG保留可编辑文字，查看端仍需对应字体。密集云图可以栅格化，但高DPI不增加原始数据分辨率。
+`save_publication_figure(fig, output_name, ...)` 默认一次输出：
+- `outputs/my_figure.png`：600 DPI、白色不透明背景、按物理印刷尺寸直接光栅化；
+- `outputs/my_figure.svg`：标准 SVG 1.1、`svg.fonttype='none'` 保留可编辑文字、结构化 `<g id="...">` 分组、无外部依赖，适合 Adobe Illustrator 二次编辑（如需同时提供字体转曲兜底文件，传 `svg_text_to_path=True` 生成 `my_figure.outlined.svg`）；
+- `outputs/my_figure.py`：完整可复现绘图源代码；
+- `outputs/my_figure.pdf` / `my_figure.preview.png` / `my_figure.json`：矢量 PDF、预览与包含 PNG/SVG 自动质检项的溯源审计报告。
+
+> 说明：若当前环境未安装 Adobe Illustrator，`checks['illustrator_tested']` 会明确保持 `False`，仅代表已通过 SVG 1.1 结构、矢量/文本可编辑性与兼容性自动检查，不虚构 Illustrator 实测。
 
 ## 常用接口
 
@@ -159,7 +177,10 @@ print(report['checks'])
 | `rounded_level_scale(..., quantum=5)` | SPL等标量级的色限向外取整，不改原始样本 |
 | `pressure_level(..., reference_pa=...)` | 显式参考声压的dB转换，不静默加下限 |
 | `rectilinear_grid(...)` / `unit_vectors(...)` | 保留网格缺口、拒绝重复坐标，生成方向矢量 |
-| `add_colorbar(...)` / `export_figure(...)` | 色条与多格式导出 |
+| `add_colorbar(...)` | 3 mm 固定宽度色条与对齐 |
+| `save_publication_figure(...)` | 统一导出 600 DPI PNG + Illustrator 可编辑 SVG + `.py` 源码 + PDF + 自动质检 JSON |
+| `export_figure(...)` | 底层多格式导出接口（需显式 provenance） |
+| `inspect_png(...)` / `inspect_svg(...)` | 独立 PNG DPI/尺寸与 SVG 矢量/文本/兼容性检查 |
 
 ## 增加新模板
 
@@ -202,7 +223,7 @@ python -B -m unittest discover -s tests -q
 ```text
 personal-scientific-plotting/
 ├── README.md                 使用说明
-├── SKILL.md                  Codex执行规则
+├── SKILL.md                  Antigravity / Claude Code / Codex 执行规则
 ├── requirements.txt          已测试直接依赖
 ├── scripts/                  示例、模板管理与houseplot库
 ├── assets/profiles/           两套有效模板
